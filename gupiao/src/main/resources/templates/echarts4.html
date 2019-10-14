@@ -1,0 +1,93 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>K线图</title>
+        <meta name="renderer" content="webkit|ie-comp|ie-stand">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8" />
+
+        <link rel="stylesheet" th:href="@{/css/font.css}">
+        <link rel="stylesheet" th:href="@{/css/xadmin.css}">
+    </head>
+    <body>
+    <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+    <div class="x-body">
+        <blockquote class="layui-elem-quote">
+            上证指数即上海证券综合指数的简称。其样本股是在上海证券交易所全部上市股票，包括A股和B股，反映了上海证券交易所上市股票价格的变动情况，自1991年7月15日起正式发布。
+        </blockquote>
+        <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+        <div id="main" style="width: 100%;height:400px;"></div>
+        <blockquote class="layui-elem-quote">
+            由于上市股票种类繁多，计算全部上市股票的价格平均数或指数的工作非常艰巨且复杂，常从上市股票中选择若干种富有代表性的样本股票，并计算这些样本股票的价格平均数或指数。用以表示整个市场的股票价格总趋势及涨跌幅度。
+        </blockquote>
+    </div>
+    <script src="//cdn.bootcss.com/echarts/3.3.2/echarts.min.js" charset="utf-8"></script>
+    <script src="//cdn.bootcss.com/echarts/3.3.2/extension/bmap.min.js" type="text/javascript"></script>
+    <script type="text/javascript" th:inline="javascript">
+
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: '上证指数K线图'
+            },
+            tooltip: {
+                trigger: 'axis',
+                formatter: function(params) {
+                    var res = params[0].seriesName + ' ' + params[0].name;
+                    res += '<br/>  开盘 : ' + params[0].value[0] + '  最高 : ' + params[0].value[3];
+                    res += '<br/>  收盘 : ' + params[0].value[1] + '  最低 : ' + params[0].value[2];
+                    return res;
+                }
+            },
+            legend: {
+                data: ['上证指数']
+            },
+            toolbox: {
+                show: true,
+                feature: {
+                    restore: {
+                        show: true
+                    },
+                    saveAsImage: {
+                        show: true
+                    }
+                }
+            },
+            dataZoom: {
+                show: true,
+                realtime: true,
+                start: 50,
+                end: 100
+            },
+            xAxis: [{
+                type: 'category',
+                boundaryGap: true,
+                axisTick: {
+                    onGap: false
+                },
+                splitLine: {
+                    show: false
+                },
+                data: [[${dateList}]]
+            }],
+            yAxis: [{
+                type: 'value',
+                scale: true,
+                boundaryGap: [0.01, 0.01]
+            }],
+            series: [{
+                name: '上证指数',
+                type: 'k',
+                data: [[${dataList}]]
+            }]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    </script>
+    </body>
+</html>
